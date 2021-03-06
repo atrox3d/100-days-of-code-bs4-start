@@ -59,10 +59,14 @@ finally:
 soup = BeautifulSoup(webpage, "html.parser")
 
 h3s = soup.find_all(name="h3", class_="title")
-h3s.reverse()
 
+h3s_inverted = h3s[::-1]
+#
+# or
+#
+h3s.reverse()
 h3: bs4.Tag
-movies = [h3.getText() for h3 in h3s]
+movies = [h3.getText() for h3 in h3s_inverted]
 
 print(f"Creating {OUTPUT_FILENAME}")
 with open(OUTPUT_FILENAME, "w", encoding="utf-8") as fp:
