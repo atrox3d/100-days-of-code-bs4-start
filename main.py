@@ -2,28 +2,68 @@ import bs4
 from bs4 import BeautifulSoup
 import requests
 
-response = requests.get("https://www.empireonline.com/movies/features/best-movies-2/")
-yc_webpage = response.text
+# this url does not work due to react
+# URL = "https://www.empireonline.com/movies/features/best-movies-2/"
+URL = "http://web.archive.org/web/20200322005914/https://www.empireonline.com/movies/features/best-movies-2/"
+INPUT_FILENAME = "movies.html"
+OUTPUT_FILENAME = "movies.txt"
 
-soup = BeautifulSoup(yc_webpage, "html.parser")
 
-# anchors = soup.find_all(name="a", class_="storylink")
-# a: bs4.Tag
-# article_texts = []
-# article_links = []
-# for a in anchors:
-#     text = a.getText()
-#     article_texts.append(text)
-#
-#     link = a.get("href")
-#     article_links.append(link)
-#
-# spans = soup.find_all(name="span", class_="score")
-# score: bs4.Tag
-# article_upvotes = [int(score.getText().split()[0]) for score in soup.find_all(name="span", class_="score")]
-#
-# index = article_upvotes.index(max(article_upvotes))
-#
-# print(article_texts[index])
-# print(article_links[index])
-# print(article_upvotes[index])
+def get_webpage(url):
+    #
+    #   get webpage as text
+    #
+    response = requests.get(url)
+    webpage = response.text
+    return webpage
+
+
+def save_webpage(filename, webpage):
+    #
+    #   save webpage to file
+    #
+    with open(filename, "w") as fp:
+        fp.write(webpage)
+
+
+def load_webpage(filename):
+    #
+    #   load webpage from file
+    #
+    with open(filename) as fp:
+        webpage = fp.read()
+        return webpage
+
+
+try:
+    #
+    #   if file exist, already downloaded, goto else:
+    #
+    with open(INPUT_FILENAME) as fp:
+        pass
+except FileNotFoundError:
+    print(f"{INPUT_FILENAME} does not exists")
+    print(f"downloading {URL}...")
+    webpage = get_webpage(URL)
+    print(f"saving {URL} to {INPUT_FILENAME}...")
+    save_webpage(INPUT_FILENAME, webpage)
+else:
+    print(f"{INPUT_FILENAME} exists")
+    print(f"loading {URL} from {INPUT_FILENAME}...")
+    webpage = load_webpage(INPUT_FILENAME)
+finally:
+    pass
+    # print(webpage)
+
+
+soup = BeautifulSoup(webpage, "html.parser")
+
+h3s = soup.find_all(name="h3", class_="title")
+h3s.reverse()
+
+h3: bs4.Tag
+movies = [h3.getText() for h3 in h3s]
+
+print(f"Creating {OUTPUT_FILENAME}")
+with open(OUTPUT_FILENAME, "w", encoding="utf-8") as fp:
+    fp.write("\n".join(movies))
