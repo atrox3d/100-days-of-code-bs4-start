@@ -56,3 +56,14 @@ print(h1_name)
 #
 section_heading: bs4.element.Tag = soup.find(name="h3", class_="heading")
 print(section_heading.get("class"))
+#
+#   find a nested tag with CSS selectors
+#
+nested_a = soup.select_one(selector="p a")          # tag
+print(nested_a)
+
+id_name = soup.select_one(selector="#name")         # id
+print(id_name)
+
+class_heading = soup.select(selector=".heading")    # class
+print(class_heading)
